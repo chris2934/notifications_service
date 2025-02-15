@@ -29,8 +29,8 @@ phases:
       - echo Running post-build steps...
       # Copy artifacts (zip files) to the CodePipeline-provided S3 bucket
       - echo Exporting deployment artifacts...
-      - aws s3 cp fetchMessages.zip s3://$S3_BUCKET_NAME/fetchMessages.zip
-      - aws s3 cp storeMessages.zip s3://$S3_BUCKET_NAME/storeMessages.zip
+      - aws s3 cp fetchMessages.zip s3://notifications-app-pipeline/fetchMessages.zip
+      - aws s3 cp storeMessages.zip s3://notifications-app-pipeline/storeMessages.zip
 artifacts:
   # Collect build artifacts for CodePipeline
   files:
