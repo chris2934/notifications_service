@@ -1,16 +1,39 @@
 version: 0.2
-
 phases:
   install:
     runtime-versions:
-      nodejs: 20
+      nodejs: 20 # Specify your required Node.js version
     commands:
       - echo Installing dependencies...
+      - npm install -g aws-cli
+  pre_build:
+    commands:
+      - echo Running pre-build steps...
+      # Navigate to method1 directory and install dependencies
+      - cd lambda-handlers/fetchMessages
       - npm install
+      - cd ..
+      # Navigate to method2 directory and install dependencies
+      - cd lambda-handlers/storeMessages
+      - npm install
+      - cd ..
   build:
     commands:
-      - echo Building the application...
-      - zip -r fetchMessages.zip .
+      - echo Building and packaging lambda functions...
+      # zip the first Lambda function directory
+      - zip -r fetchMessages.zip
+      # zip the second Lambda function directory
+      - zip -r storeMessages.zip
+  post_build:
+    commands:
+      - echo Running post-build steps...
+      # Copy artifacts (zip files) to the CodePipeline-provided S3 bucket
+      - echo Exporting deployment artifacts...
+      - aws s3 cp fetchMessages.zip s3://$S3_BUCKET_NAME/fetchMessages.zip
+      - aws s3 cp storeMessages.zip s3://$S3_BUCKET_NAME/storeMessages.zip
 artifacts:
+  # Collect build artifacts for CodePipeline
   files:
     - fetchMessages.zip
+    - storeMessages.zip
+  discard-paths: yes
