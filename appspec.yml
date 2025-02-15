@@ -1,0 +1,23 @@
+version: 0.0
+Resources:
+  - MyFirstLambdaFunction:
+      Type: AWS::Lambda::Function
+      Properties:
+        Name: fetchMessages
+        Alias: nonprod
+        CurrentVersion: 1
+        TargetVersion: 2
+        Functions:
+          - BeforeAllowTraffic: validateFunction
+          - AfterAllowTraffic: notifySuccess
+
+  - MySecondLambdaFunction:
+      Type: AWS::Lambda::Function
+      Properties:
+        Name: storeMessages
+        Alias: nonprod
+        CurrentVersion: 3
+        TargetVersion: 4
+        Functions:
+          - BeforeAllowTraffic: checkDependencies
+          - AfterAllowTraffic: cleanupResources
