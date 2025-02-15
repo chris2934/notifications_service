@@ -1,6 +1,6 @@
 version: 0.0
 Resources:
-  - MyFirstLambdaFunction:
+  - FetchMessagesLambdaFunction:
       Type: AWS::Lambda::Function
       Properties:
         Name: fetchMessages
@@ -11,7 +11,7 @@ Resources:
           - BeforeAllowTraffic: validateFunction
           - AfterAllowTraffic: notifySuccess
 
-  - MySecondLambdaFunction:
+  - StoreMessagesLambdaFunction:
       Type: AWS::Lambda::Function
       Properties:
         Name: storeMessages
