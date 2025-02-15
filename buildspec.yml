@@ -4,35 +4,26 @@ phases:
     runtime-versions:
       nodejs: 20 # Specify your required Node.js version
     commands:
-      - echo Installing dependencies...
-      - npm install -g aws-cli
+      - echo "Installing dependencies..."
+      - pip install awscli # Using pip to install AWS CLI
   pre_build:
     commands:
-      - echo Running pre-build steps...
-      # Navigate to method1 directory and install dependencies
-      - cd lambda-handlers/fetchMessages
-      - npm install
-      - cd ..
-      # Navigate to method2 directory and install dependencies
-      - cd lambda-handlers/storeMessages
-      - npm install
-      - cd ..
+      - echo "Running pre-build steps..."
+      # Install dependencies and prepare Lambda functions
+      - cd lambda-handlers/fetchMessages && npm install && cd ../..
+      - cd lambda-handlers/storeMessages && npm install && cd ../..
   build:
     commands:
-      - echo Building and packaging lambda functions...
-      # zip the first Lambda function directory
-      - zip -r fetchMessages.zip
-      # zip the second Lambda function directory
-      - zip -r storeMessages.zip
+      - echo "Building and packaging Lambda functions..."
+      # Zip Lambda functions
+      - cd lambda-handlers/fetchMessages && zip -r ../../fetchMessages.zip . && cd ../..
+      - cd lambda-handlers/storeMessages && zip -r ../../storeMessages.zip . && cd ../..
   post_build:
     commands:
-      - echo Running post-build steps...
-      # Copy artifacts (zip files) to the CodePipeline-provided S3 bucket
-      - echo Exporting deployment artifacts...
+      - echo "Uploading deployment artifacts to S3..."
       - aws s3 cp fetchMessages.zip s3://notifications-app-pipeline/fetchMessages.zip
       - aws s3 cp storeMessages.zip s3://notifications-app-pipeline/storeMessages.zip
 artifacts:
-  # Collect build artifacts for CodePipeline
   files:
     - fetchMessages.zip
     - storeMessages.zip
