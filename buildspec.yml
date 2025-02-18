@@ -25,7 +25,7 @@ phases:
       - echo "Uploading deployment artifacts to S3..."
       - aws s3 cp fetchMessages.zip s3://notifications-app-pipeline/fetchMessages.zip
       - aws s3 cp storeMessages.zip s3://notifications-app-pipeline/storeMessages.zip
-      - aws s3 cp storeMessages.zip s3://notifications-app-pipeline/deleteMessages.zip
+      - aws s3 cp deleteMessages.zip s3://notifications-app-pipeline/deleteMessages.zip
 artifacts:
   files:
     - fetchMessages.zip
