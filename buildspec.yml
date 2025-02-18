@@ -12,19 +12,23 @@ phases:
       # Install dependencies and prepare Lambda functions
       - cd lambda-handlers/fetchMessages && npm install && cd ../..
       - cd lambda-handlers/storeMessages && npm install && cd ../..
+      - cd lambda-handlers/deleteMessages && npm install && cd ../..
   build:
     commands:
       - echo "Building and packaging Lambda functions..."
       # Zip Lambda functions
       - cd lambda-handlers/fetchMessages && zip -r ../../fetchMessages.zip . && cd ../..
       - cd lambda-handlers/storeMessages && zip -r ../../storeMessages.zip . && cd ../..
+      - cd lambda-handlers/deleteMessages && zip -r ../../deleteMessages.zip . && cd ../..
   post_build:
     commands:
       - echo "Uploading deployment artifacts to S3..."
       - aws s3 cp fetchMessages.zip s3://notifications-app-pipeline/fetchMessages.zip
       - aws s3 cp storeMessages.zip s3://notifications-app-pipeline/storeMessages.zip
+      - aws s3 cp storeMessages.zip s3://notifications-app-pipeline/deleteMessages.zip
 artifacts:
   files:
     - fetchMessages.zip
     - storeMessages.zip
+    - deleteMessages.zip
   discard-paths: yes
