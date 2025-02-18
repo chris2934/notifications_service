@@ -21,3 +21,14 @@ Resources:
         Functions:
           - BeforeAllowTraffic: checkDependencies
           - AfterAllowTraffic: cleanupResources
+
+  - DeleteMessagesLambdaFunction:
+      Type: AWS::Lambda::Function
+      Properties:
+        Name: deleteMessages
+        Alias: nonprod
+        CurrentVersion: 3
+        TargetVersion: 4
+        Functions:
+          - BeforeAllowTraffic: checkDependencies
+          - AfterAllowTraffic: cleanupResources
