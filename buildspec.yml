@@ -6,6 +6,7 @@ phases:
     commands:
       - echo "Installing dependencies..."
       - pip install awscli
+      - apt-get update && apt-get install -y zip
   pre_build:
     commands:
       - echo "Running pre-build steps..."
