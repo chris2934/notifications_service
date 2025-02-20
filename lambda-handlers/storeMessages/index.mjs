@@ -7,25 +7,23 @@ export const handler = async (event, context) => {
 	 const snsTopicArn = "arn:aws:sns:us-east-1:752925592607:TestTopic";
 	 
 	 try {
-		  const requestBody = JSON.parse(event.body);
-		  const message = requestBody.message;
+		  // AppSync sends the arguments in event.arguments
+		  const message = event.arguments.message;
 		  
 		  //Check if the message has already been processed (recursion flag)
-		  if (requestBody.isProcessed) {
+		  if (event.arguments.isProcessed) {
 				console.log("Message already processed. Exiting to prevent infinite loop.");
 				return {
-					 statusCode: 200,
-					 body: JSON.stringify({
-						  message: 'Message already processed. Exiting to prevent infinite loop.'
-					 })
+					 success: true,
+					 message: 'Message already processed. Exiting to prevent infinite loop.'
 				};
 		  }
 		  
-		  //Add a flag to the message to indicate it has been processed
-		  const flagAddedRequestBody = {
-				...requestBody,
-				isProcessed: true // Add the recursion prevention flag
-		  }
+		  // Add the recursion prevention flag
+		  const flagAddedMessage = {
+				message,
+				isProcessed: true
+		  };
 		  
 		  const params = {
 				Message: JSON.stringify(message),// send the updated message with the flag
@@ -47,29 +45,21 @@ export const handler = async (event, context) => {
 		  };
 		  await dynamoDbDocClient.put(dynamoParams).promise();
 		  
+		  // Return format for AppSync
 		  return {
-				statusCode: 200,
-				headers: {
-					 "Access-Control-Allow-Origin": "*", // CORS header to allow any origin
-					 "Access-Control-Allow-Headers": "Content-Type", // Allow specific headers
-				},
-				body: JSON.stringify({
-					 message: 'Message published successfully and stored in DynamoDB',
-					 messageId: result.MessageId
-				})
+				success: true,
+				messageId: result.MessageId,
+				message: 'Message published successfully and stored in DynamoDB'
 		  };
+		  
 	 } catch (error) {
-		  console.error(error);
+		  console.error('Error:', error);
+		  
+		  // Error response format for AppSync
 		  return {
-				statusCode: 500,
-				headers: {
-					 "Access-Control-Allow-Origin": "*", // CORS header to allow any origin
-					 "Access-Control-Allow-Headers": "Content-Type", // Allow specific headers
-				},
-				body: JSON.stringify({
-					 message: 'Error publishing message',
-					 error: error.message
-				})
+				success: false,
+				message: 'Error publishing message',
+				error: error.message
 		  };
 	 }
 };
